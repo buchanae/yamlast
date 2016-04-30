@@ -3,22 +3,22 @@ package yamlast
 import "strconv"
 
 const (
-	documentNode = 1 << iota
-	mappingNode
-	sequenceNode
-	scalarNode
-	aliasNode
+	DocumentNode = 1 << iota
+	MappingNode
+	SequenceNode
+	ScalarNode
+	AliasNode
 )
 
 // Node represents a node within the AST.
 type Node struct {
-	kind         int
-	line, column int
-	tag          string
-	value        string
-	implicit     bool
-	children     []*Node
-	anchors      map[string]*Node
+	Kind         int
+	Line, Column int
+	Tag          string
+	Value        string
+	Implicit     bool
+	Children     []*Node
+	Anchors      map[string]*Node
 }
 
 // Parse parses the given bytes and returns the document node for
@@ -100,7 +100,7 @@ func (p *parser) fail() {
 
 func (p *parser) anchor(n *Node, anchor []byte) {
 	if anchor != nil {
-		p.doc.anchors[string(anchor)] = n
+		p.doc.Anchors[string(anchor)] = n
 	}
 }
 
@@ -126,18 +126,18 @@ func (p *parser) parse() *Node {
 
 func (p *parser) node(kind int) *Node {
 	return &Node{
-		kind:   kind,
-		line:   p.event.start_mark.line,
-		column: p.event.start_mark.column,
+		Kind:   kind,
+		Line:   p.event.start_mark.line,
+		Column: p.event.start_mark.column,
 	}
 }
 
 func (p *parser) document() *Node {
-	n := p.node(documentNode)
-	n.anchors = make(map[string]*Node)
+	n := p.node(DocumentNode)
+	n.Anchors = make(map[string]*Node)
 	p.doc = n
 	p.skip()
-	n.children = append(n.children, p.parse())
+	n.Children = append(n.Children, p.parse())
 	if p.event.typ != yaml_DOCUMENT_END_EVENT {
 		panic("expected end of document event but got " + strconv.Itoa(int(p.event.typ)))
 	}
@@ -146,39 +146,39 @@ func (p *parser) document() *Node {
 }
 
 func (p *parser) alias() *Node {
-	n := p.node(aliasNode)
-	n.value = string(p.event.anchor)
+	n := p.node(AliasNode)
+	n.Value = string(p.event.anchor)
 	p.skip()
 	return n
 }
 
 func (p *parser) scalar() *Node {
-	n := p.node(scalarNode)
-	n.value = string(p.event.value)
-	n.tag = string(p.event.tag)
-	n.implicit = p.event.implicit
+	n := p.node(ScalarNode)
+	n.Value = string(p.event.value)
+	n.Tag = string(p.event.tag)
+	n.Implicit = p.event.implicit
 	p.anchor(n, p.event.anchor)
 	p.skip()
 	return n
 }
 
 func (p *parser) sequence() *Node {
-	n := p.node(sequenceNode)
+	n := p.node(SequenceNode)
 	p.anchor(n, p.event.anchor)
 	p.skip()
 	for p.event.typ != yaml_SEQUENCE_END_EVENT {
-		n.children = append(n.children, p.parse())
+		n.Children = append(n.Children, p.parse())
 	}
 	p.skip()
 	return n
 }
 
 func (p *parser) mapping() *Node {
-	n := p.node(mappingNode)
+	n := p.node(MappingNode)
 	p.anchor(n, p.event.anchor)
 	p.skip()
 	for p.event.typ != yaml_MAPPING_END_EVENT {
-		n.children = append(n.children, p.parse(), p.parse())
+		n.Children = append(n.Children, p.parse(), p.parse())
 	}
 	p.skip()
 	return n
