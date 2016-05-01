@@ -51,3 +51,20 @@ func TestComplex(t *testing.T) {
 	assert.NotNil(t, selectedNode)
 	assert.Equal(t, selectedNode.Value, "rad")
 }
+
+func TestTrailingChars(t *testing.T) {
+	template := "v: foo"
+	doc := Parse([]byte(template))
+
+	selectedNode := SelectNode(doc, "v[]")
+	assert.Nil(t, selectedNode)
+}
+
+func TestTrailingSpace(t *testing.T) {
+	template := "v: foo"
+	doc := Parse([]byte(template))
+
+	selectedNode := SelectNode(doc, "v ")
+	assert.NotNil(t, selectedNode)
+	assert.Equal(t, "foo", selectedNode.Value)
+}

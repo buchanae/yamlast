@@ -3,6 +3,7 @@ package yamlast
 import (
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 const selectorRegex = `(([^\.\"\[\]\s]+)|\"([^\"]*)\"|\[([0-9]+)\])\.?`
@@ -13,6 +14,8 @@ func SelectNode(node *Node, selector string) *Node {
 	if node == nil {
 		return nil
 	}
+
+	selector = strings.TrimSpace(selector)
 
 	r, _ := regexp.Compile(selectorRegex)
 	matches := r.FindAllStringIndex(selector, -1)
