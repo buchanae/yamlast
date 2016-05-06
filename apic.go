@@ -1,8 +1,8 @@
 package yamlast
 
 import (
+	"errors"
 	"io"
-	"os"
 )
 
 func yaml_insert_token(parser *yaml_parser_t, pos int, token *yaml_token_t) {
@@ -54,30 +54,15 @@ func yaml_file_read_handler(parser *yaml_parser_t, buffer []byte) (n int, err er
 }
 
 // Set a string input.
-func yaml_parser_set_input_string(parser *yaml_parser_t, input []byte) {
+func yaml_parser_set_input_string(parser *yaml_parser_t, input []byte) error {
 	if parser.read_handler != nil {
-		panic("must set the input source only once")
+		return errors.New("must set the input source only once")
 	}
 	parser.read_handler = yaml_string_read_handler
 	parser.input = input
 	parser.input_pos = 0
-}
 
-// Set a file input.
-func yaml_parser_set_input_file(parser *yaml_parser_t, file *os.File) {
-	if parser.read_handler != nil {
-		panic("must set the input source only once")
-	}
-	parser.read_handler = yaml_file_read_handler
-	parser.input_file = file
-}
-
-// Set the source encoding.
-func yaml_parser_set_encoding(parser *yaml_parser_t, encoding yaml_encoding_t) {
-	if parser.encoding != yaml_ANY_ENCODING {
-		panic("must set the encoding only once")
-	}
-	parser.encoding = encoding
+	return nil
 }
 
 // Create a new emitter object.
@@ -106,32 +91,6 @@ func yaml_string_write_handler(emitter *yaml_emitter_t, buffer []byte) error {
 func yaml_file_write_handler(emitter *yaml_emitter_t, buffer []byte) error {
 	_, err := emitter.output_file.Write(buffer)
 	return err
-}
-
-// Set a string output.
-func yaml_emitter_set_output_string(emitter *yaml_emitter_t, output_buffer *[]byte) {
-	if emitter.write_handler != nil {
-		panic("must set the output target only once")
-	}
-	emitter.write_handler = yaml_string_write_handler
-	emitter.output_buffer = output_buffer
-}
-
-// Set a file output.
-func yaml_emitter_set_output_file(emitter *yaml_emitter_t, file io.Writer) {
-	if emitter.write_handler != nil {
-		panic("must set the output target only once")
-	}
-	emitter.write_handler = yaml_file_write_handler
-	emitter.output_file = file
-}
-
-// Set the output encoding.
-func yaml_emitter_set_encoding(emitter *yaml_emitter_t, encoding yaml_encoding_t) {
-	if emitter.encoding != yaml_ANY_ENCODING {
-		panic("must set the output encoding only once")
-	}
-	emitter.encoding = encoding
 }
 
 // Set the canonical output style.

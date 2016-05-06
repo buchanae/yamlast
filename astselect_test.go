@@ -8,7 +8,7 @@ import (
 
 func TestSelectKey(t *testing.T) {
 	template := "v: 5"
-	doc := Parse([]byte(template))
+	doc, _ := Parse([]byte(template))
 
 	selectedNode := SelectNode(doc, "v")
 	assert.NotNil(t, selectedNode)
@@ -17,7 +17,7 @@ func TestSelectKey(t *testing.T) {
 
 func TestSelectStringKey(t *testing.T) {
 	template := "key: foo"
-	doc := Parse([]byte(template))
+	doc, _ := Parse([]byte(template))
 
 	selectedNode := SelectNode(doc, "\"key\"")
 	assert.NotNil(t, selectedNode)
@@ -29,7 +29,7 @@ func TestSelectArray(t *testing.T) {
     - a
     - test
   `
-	doc := Parse([]byte(template))
+	doc, _ := Parse([]byte(template))
 
 	selectedNode := SelectNode(doc, "[1]")
 	assert.NotNil(t, selectedNode)
@@ -46,7 +46,7 @@ func TestComplex(t *testing.T) {
       - cool: key
         other: rad
   `
-	doc := Parse([]byte(template))
+	doc, _ := Parse([]byte(template))
 	selectedNode := SelectNode(doc, "baz[3].other")
 	assert.NotNil(t, selectedNode)
 	assert.Equal(t, selectedNode.Value, "rad")
@@ -54,7 +54,7 @@ func TestComplex(t *testing.T) {
 
 func TestTrailingChars(t *testing.T) {
 	template := "v: foo"
-	doc := Parse([]byte(template))
+	doc, _ := Parse([]byte(template))
 
 	selectedNode := SelectNode(doc, "v[]")
 	assert.Nil(t, selectedNode)
@@ -62,7 +62,7 @@ func TestTrailingChars(t *testing.T) {
 
 func TestTrailingSpace(t *testing.T) {
 	template := "v: foo"
-	doc := Parse([]byte(template))
+	doc, _ := Parse([]byte(template))
 
 	selectedNode := SelectNode(doc, "v ")
 	assert.NotNil(t, selectedNode)
