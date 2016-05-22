@@ -1,4 +1,4 @@
-# yaml-ast
+# yamlast
 
 This is a horrible copy and paste job of the underlying yaml parser in
 [go-yaml](https://github.com/go-yaml/yaml) because I wanted to be able to get
@@ -8,7 +8,7 @@ yaml into structures. Maybe you'll find it useful?
 ## Installing
 
 ```
-go get -u github.com/commondream/yaml-ast
+go get -u github.com/commondream/yamlast
 ```
 
 ## Usage
