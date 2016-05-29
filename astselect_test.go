@@ -68,3 +68,11 @@ func TestTrailingSpace(t *testing.T) {
 	assert.NotNil(t, selectedNode)
 	assert.Equal(t, "foo", selectedNode.Value)
 }
+
+func TestNoMatchReturnsNil(t *testing.T) {
+	template := "v: baz"
+	doc, _ := Parse([]byte(template))
+	selectedNode := SelectNode(doc, "meta")
+
+	assert.Nil(t, selectedNode)
+}

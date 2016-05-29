@@ -61,11 +61,17 @@ func SelectNode(node *Node, selector string) *Node {
 		}
 
 		if key != "" && current.Kind == MappingNode {
+			foundKey := false
 			for i := 0; i < len(current.Children); i += 2 {
 				if current.Children[i].Value == key {
+					foundKey = true
 					current = current.Children[i+1]
 					break
 				}
+			}
+
+			if !foundKey {
+				return nil
 			}
 		} else if arrKey != "" && current.Kind == SequenceNode {
 			i, err := strconv.Atoi(arrKey)
